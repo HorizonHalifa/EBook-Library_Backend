@@ -25,6 +25,6 @@ public class AdminController {
     @GetMapping("/dashboard")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')") // only admins can access this endpoint
     public ResponseEntity<Map<String, String>> accessAdminDashboard() {
-        return ResponseEntity.ok(Map.of("message", "Welcome a                            dmin! You have access to the admin dashboard."));
+        return ResponseEntity.ok(Map.of("message", "Welcome admin! You have access to the admin dashboard."));
     }
 }
