@@ -1,6 +1,7 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.service;
 
-import com.horizon.ebooklibrary.ebooklibrarybackend.model.User;
+import com.horizon.ebooklibrary.ebooklibrarybackend.entity.Role;
+import com.horizon.ebooklibrary.ebooklibrarybackend.entity.User;
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
 
@@ -10,21 +11,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * Service class that handles user authentication and registration
  */
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
-
-    // Constructor based dependency injection.
-    public UserService(UserRepository userRepository, JwtUtils jwtUtils) {
-        this.userRepository = userRepository;
-        this.jwtUtils = jwtUtils;
-        this.passwordEncoder = new BCryptPasswordEncoder(); // Hashes passwords securely
-    }
 
     /**
      * Registers a new user.
@@ -32,6 +29,10 @@ public class UserService {
      * @param user User object containing email and password.
      */
     public void registerUser(User user) {
+        // Assign default role if none is provided
+        if(user.getRole() == null) {
+            user.setRole(Role.USER);
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Hash password
         userRepository.save(user);
     }

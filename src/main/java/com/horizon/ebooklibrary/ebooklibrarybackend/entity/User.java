@@ -1,6 +1,8 @@
-package com.horizon.ebooklibrary.ebooklibrarybackend.model;
+package com.horizon.ebooklibrary.ebooklibrarybackend.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,10 +11,12 @@ import lombok.Setter;
  * Represents a user entity in the system.
  * This class is mapped to a "users" table in the database.
  */
-@Entity
 @Getter
+@Entity
 @Setter
 @NoArgsConstructor // Generates a default constructor
+@AllArgsConstructor
+@Builder
 @Table(name = "users")
 public class User {
 
@@ -41,34 +45,22 @@ public class User {
     /**
      * Role of the user (default: "USER")
      * Can be used for role based access control.
+     * Stored as String in the database
      */
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role = "USER";
+    private Role role;
 
     /**
      * Constructor to create a new user with email and password
      * @param email User's email
      * @param password User's hashed password
+     * @param role User role (USER or ADMIN), defaults to USER if null
      */
-    public User(String email, String password) {
+    public User(String email, String password, Role role) {
         this.email = email;
         this.password = password;
-        this.role = "USER"; // Default role
+        this.role = (role != null) ? role : Role.USER; // Defaults role if null
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getRole() {
-        return role;
-    }
 }

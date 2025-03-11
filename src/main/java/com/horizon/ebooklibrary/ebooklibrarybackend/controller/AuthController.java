@@ -1,12 +1,14 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.controller;
 
-import com.horizon.ebooklibrary.ebooklibrarybackend.model.User;
+import com.horizon.ebooklibrary.ebooklibrarybackend.entity.User;
 import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
 import com.horizon.ebooklibrary.ebooklibrarybackend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Controller that handles user authentication requests.
@@ -15,19 +17,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
     private final JwtUtils jwtUtils;
-
-    /**
-     * Constructor based dependency injection for UserService and JwtUtils
-     * @param userService Handles user authentication logic.
-     * @param jwtUtils Handles JWT token generation.
-     */
-    public AuthController(UserService userService, JwtUtils jwtUtils) {
-        this.userService = userService;
-        this.jwtUtils = jwtUtils;
-    }
 
     /**
      * User registration:
