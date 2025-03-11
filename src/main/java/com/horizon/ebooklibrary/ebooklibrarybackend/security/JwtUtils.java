@@ -1,5 +1,7 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.security;
 
+import com.horizon.ebooklibrary.ebooklibrarybackend.entity.User;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
@@ -21,15 +23,13 @@ public class JwtUtils {
 
     /**
      * Generates a JWT token for the given user email.
-     *
-     * @param email the email to include in the token.
-     * @param role
+     * @param user@return A signed JWT token.
      * @return A signed JWT token.
      */
-    public String generateToken(String email, String role) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(email) // Set user email as subject
-                .addClaims(Map.of("role", role)) // include role in JWT payload
+                .setSubject(user.getEmail()) // Set user email as subject
+                .claim("authorities", user.getRole().name()) // Store role as "authorities"
                 .setIssuedAt(new Date()) // When token was issued
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 1 day expiry time
                 .signWith(secretKey, SignatureAlgorithm.HS256) // Sign with secret key
@@ -61,7 +61,7 @@ public class JwtUtils {
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .get("role");
+                .get("authorities", String.class);
     }
 
     /**
@@ -81,4 +81,7 @@ public class JwtUtils {
         }
     }
 
+    public Key getSecretKey() {
+        return secretKey;
+    }
 }

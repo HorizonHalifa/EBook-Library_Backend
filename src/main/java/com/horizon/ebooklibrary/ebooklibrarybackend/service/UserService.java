@@ -51,7 +51,7 @@ public class UserService {
 
             // Check if the raw password matches the hashed password
             if (passwordEncoder.matches(password, user.getPassword()))
-                return jwtUtils.generateToken(user.getEmail(), user.getRole().name()); // Generate JWT token
+                return jwtUtils.generateToken(user); // Generate JWT token
         }
 
         return null; // Authentication failed
