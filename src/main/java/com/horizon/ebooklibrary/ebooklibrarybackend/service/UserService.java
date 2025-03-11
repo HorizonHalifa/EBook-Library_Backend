@@ -19,30 +19,30 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder; // Injected PasswordEncoder
     private final JwtUtils jwtUtils;
 
     /**
-     * Registers a new user.
-     * Encrypts the password before saving to the database.
-     * @param user User object containing email and password.
+     * Registers a new user with an encoded password.
+     * @param user The user to be registered.
      */
     public void registerUser(User user) {
         // Assign default role if none is provided
         if(user.getRole() == null) {
             user.setRole(Role.USER);
         }
+        // Encrypts the password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Hash password
         userRepository.save(user);
     }
 
     /**
-     * Authenticates a user by checking email and password.
-     * If successful, generates a JWT token.
+     * Authenticates a user and returns a JWT token
      * @param email User's email.
-     * @param password User's password.
-     * @return JWT token if authentication is successful, otherwise null/
+     * @param password Raw password provided by the user.
+     * @return JWT token if authentication is successful, otherwise null
      */
     public String authenticate(String email, String password) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
@@ -50,9 +50,9 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
 
-            // Verify password
+            // Check if the raw password matches the hashed password
             if (passwordEncoder.matches(password, user.getPassword()))
-                return jwtUtils.generateToken(user.getEmail()); // Return JWT token
+                return jwtUtils.generateToken(user.getEmail()); // Generate JWT token
         }
 
         return null; // Authentication failed
