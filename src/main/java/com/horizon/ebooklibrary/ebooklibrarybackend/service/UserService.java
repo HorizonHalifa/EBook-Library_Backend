@@ -5,7 +5,6 @@ import com.horizon.ebooklibrary.ebooklibrarybackend.entity.User;
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // Injected PasswordEncoder
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
     /**
@@ -34,7 +33,7 @@ public class UserService {
             user.setRole(Role.USER);
         }
         // Encrypts the password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Hash password
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt password
         userRepository.save(user);
     }
 
@@ -52,7 +51,7 @@ public class UserService {
 
             // Check if the raw password matches the hashed password
             if (passwordEncoder.matches(password, user.getPassword()))
-                return jwtUtils.generateToken(user.getEmail()); // Generate JWT token
+                return jwtUtils.generateToken(user.getEmail(), user.getRole().name()); // Generate JWT token
         }
 
         return null; // Authentication failed

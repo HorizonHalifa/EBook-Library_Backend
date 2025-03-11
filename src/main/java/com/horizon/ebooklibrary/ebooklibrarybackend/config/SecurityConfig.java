@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity // Enables @PreAuthorize role-based security
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter; // Injecting JWT filter
@@ -41,8 +43,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // public access for login and signup
-                        .requestMatchers("/api/hello").authenticated() // protected endpoint, requires authentication
+                        .requestMatchers("/auth/**").permitAll() // public access for authentication routes
+                        .requestMatchers("/api/**").authenticated() // require authentication for general API
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // admin only access
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session
