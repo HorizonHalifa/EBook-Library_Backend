@@ -29,7 +29,7 @@ public class JwtUtils {
     public String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail()) // Set user email as subject
-                .claim("authorities", user.getRole().name()) // Store role as "authorities"
+                .claim("authorities", "ROLE_" + user.getRole().name()) // Store role as "authorities"
                 .setIssuedAt(new Date()) // When token was issued
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 1 day expiry time
                 .signWith(secretKey, SignatureAlgorithm.HS256) // Sign with secret key
