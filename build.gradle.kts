@@ -37,6 +37,8 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
+	implementation("org.postgresql:postgresql:42.6.0")
+
 	// H2 Database (Temporary database for testing)
 	runtimeOnly("com.h2database:h2")
 
