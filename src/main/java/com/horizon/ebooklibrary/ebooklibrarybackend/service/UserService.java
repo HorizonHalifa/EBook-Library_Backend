@@ -56,4 +56,14 @@ public class UserService {
 
         return null; // Authentication failed
     }
+
+    /**
+     * find a user by their email.
+     * @param email the email of the user.
+     * @return The User object if found, otherwise null.
+     */
+    // Encapsulation: UserService should be the only place that interacts with UserRepository.
+    public static User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
 }

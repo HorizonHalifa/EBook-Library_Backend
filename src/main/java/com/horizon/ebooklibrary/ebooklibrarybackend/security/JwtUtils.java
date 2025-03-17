@@ -15,7 +15,10 @@ import java.util.Map;
  */
 @Component
 public class JwtUtils {
-    private static final long EXPIRATION_TIME = 86400000; // 1 day in milliseconds
+
+    // Access tokens expire in 15 minutes, refresh tokens expire in 2 hours.
+    private static final long EXPIRATION_TIME_15 = 900000; // 15 minutes expiry
+    private static final long EXPIRATION_TIME_2HR = 7200000; // 2 hours expiry
 
     // HMAC with SHA-256 is used for signing JWTs
     private static final String SECRET = "+pu/Q8KgBbnGUJ/MKA/meHBAAekvMt+Y+CzD+GHI/fw=";
@@ -31,8 +34,17 @@ public class JwtUtils {
                 .setSubject(user.getEmail()) // Set user email as subject
                 .claim("authorities", "ROLE_" + user.getRole().name()) // Store role as "authorities"
                 .setIssuedAt(new Date()) // When token was issued
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 1 day expiry time
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_15))
                 .signWith(secretKey, SignatureAlgorithm.HS256) // Sign with secret key
+                .compact();
+    }
+
+    public String generateRefreshToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_2HR))
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
