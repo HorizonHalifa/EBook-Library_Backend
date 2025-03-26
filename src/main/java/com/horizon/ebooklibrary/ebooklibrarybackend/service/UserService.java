@@ -44,7 +44,7 @@ public class UserService {
      * @return JWT token if authentication is successful, otherwise null
      */
     public String authenticate(String email, String password) {
-        Optional<User> optionalUser = UserRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -63,7 +63,7 @@ public class UserService {
      * @return The User object if found, otherwise null.
      */
     // Encapsulation: UserService should be the only place that interacts with UserRepository.
-    public static User findByEmail(String email) {
-        return UserRepository.findByEmail(email).orElse(null);
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
