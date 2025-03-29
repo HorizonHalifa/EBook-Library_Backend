@@ -20,10 +20,9 @@ import lombok.RequiredArgsConstructor;
  * Configuration class for the Spring security.
  *
  * This class:
- * Disables default authentication mechanisms (removed the auto-generated password).
- * Configures public and protected API endpoints.
- * Ensures JWT authentication is applied correctly.
- * Registers PasswordEncoder to securely hash the password
+ * Enables JWT authentication.
+ * Defines which endpoints are public and which are protected.
+ * Applies @PreAuthorize checks on methods using @EnableMethodSecurity.
  */
 @Configuration
 @RequiredArgsConstructor
@@ -33,7 +32,10 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter; // Injecting JWT filter
 
     /**
-     * Defines security configurations for the application
+     * Defines security configurations for the application.
+     * Public: /auth/** and /books/** for read-only access.
+     * Admin: /admin/**
+     * Protected: All other endpoints.
      * @param http The HttpSecurity object for configuring security settings.
      * @return The configured SecurityFilterChain.
      * @throws Exception If an error occurs during configuration.
@@ -43,12 +45,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // public access for authentication routes
+                        .requestMatchers("/auth/**").permitAll() // signup / login
                         .requestMatchers("/books/**").permitAll() // allow everyone to view books
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin only access
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
-                //.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable())) // allow H2 Console frames
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Apply JWT filter
 
@@ -56,14 +57,20 @@ public class SecurityConfig {
     }
 
     /**
-     * Registers a PasswordEncoder bean to securely hash user passwords.
+     * Provides password hashing via BCrypt.
      * @return A PasswordEncoder instance.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Hashes password securely
+        return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Provides the AuthenticationManager for authenticating credentials.
+     * @param authenticationConfiguration
+     * @return
+     * @throws Exception
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

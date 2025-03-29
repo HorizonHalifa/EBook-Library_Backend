@@ -19,6 +19,12 @@ import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * REST controller that handles book-related endpoints.
+ * Read-only operations are public.
+ * Marking read/unread requires authentication.
+ * add/delete Books is restricted to admins.
+ */
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
@@ -86,12 +92,22 @@ public class BookController {
         return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Add a new book to the library
+     * @param book book to add
+     * @return request status
+     */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')") // Only admins can read books
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
         return ResponseEntity.ok(bookService.addBook(book));
     }
 
+    /**
+     * Delete a book by ID
+     * @param id of the book to delete
+     * @return request status
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')") // Only admins can delete books
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
