@@ -44,8 +44,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // public access for authentication routes
+                        .requestMatchers("/books/**").permitAll() // allow everyone to view books
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin only access
-                        .requestMatchers("/api/**").authenticated() // require authentication for general API
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
                 //.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable())) // allow H2 Console frames
