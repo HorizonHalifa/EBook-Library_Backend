@@ -10,11 +10,11 @@ import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class BookService {
 
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     /**
      * Fetch all books (both read and unread)
