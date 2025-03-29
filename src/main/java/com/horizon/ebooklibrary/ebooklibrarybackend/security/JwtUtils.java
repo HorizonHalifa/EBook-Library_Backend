@@ -22,7 +22,8 @@ public class JwtUtils {
 
     // HMAC with SHA-256 is used for signing JWTs
     private static final String SECRET = "+pu/Q8KgBbnGUJ/MKA/meHBAAekvMt+Y+CzD+GHI/fw=";
-    private final Key secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET));
+    private final Key secretKey = Keys.hmacShaKeyFor(SECRET.getBytes());
+    //private final Key secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET));
 
     /**
      * Generates a JWT token for the given user email.
