@@ -20,10 +20,11 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 /**
- * REST controller that handles book-related endpoints.
- * Read-only operations are public.
- * Marking read/unread requires authentication.
- * add/delete Books is restricted to admins.
+ * REST controller for managing books in the library.
+ * Responsibilities:
+ * Provides public endpoints to fetch books.
+ * Allows authenticated users to mark books as read/unread.
+ * Restricts book creation and deletion to admin users only.
  */
 @RestController
 @RequestMapping("/books")
@@ -32,9 +33,12 @@ public class BookController {
 
     private final BookService bookService;
 
+    // Read Methods:
+
     /**
-     * Retrieve all books
-     * @return Response Entity List of all books.
+     * Returns a list of all books in the library.
+     * This endpoint is public and does not require authentication.
+     * @return List of all books.
      */
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
@@ -42,8 +46,8 @@ public class BookController {
     }
 
     /**
-     * Get all read books
-     * @return response entity containing read books
+     * Returns a list of books marked as read.
+     * @return list of read books.
      */
     @GetMapping("/read")
     public ResponseEntity<List<Book>> getReadBooks() {
@@ -51,8 +55,8 @@ public class BookController {
     }
 
     /**
-     * Get all unread books
-     * @return response entity containing unread books
+     * Returns a list of books marked as unread.
+     * @return List of unread books.
      */
     @GetMapping("/unread")
     public ResponseEntity<List<Book>> getUnreadBooks() {
@@ -60,9 +64,23 @@ public class BookController {
     }
 
     /**
+     * Fetches a single book by it's ID.
+     * @param id ID of the book to fetch.
+     * @return Book if found, 404 otherwise.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Optional<Book> book = bookService.getBookById(id);
+        return book.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Update Methods:
+
+    /**
      * Marks a book as read
-     * @param id the ID of the book to mark as read
-     * @return "Book marked as read" if succeeded
+     * @param id ID of the book to mark.
+     * @return Success message.
      */
     @PutMapping("/{id}/mark-read")
     public ResponseEntity<String> markBookAsRead(@PathVariable Long id) {
@@ -72,8 +90,8 @@ public class BookController {
 
     /**
      * Mark book as unread
-     * @param id book to mark as unread
-     * @return "Book marked as unread" if succeeded
+     * @param id ID of the book to mark.
+     * @return Success message.
      */
     @PutMapping("/{id}/mark-unread")
     public ResponseEntity<String> markBookAsUnread(@PathVariable Long id) {
@@ -81,21 +99,13 @@ public class BookController {
         return ResponseEntity.ok("Book marked as unread.");
     }
 
-    /**
-     * Retrieves book by id
-     * @param id to search by
-     * @return Book that matches id
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
-        Optional<Book> book = bookService.getBookById(id);
-        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    // Admin Methods:
 
     /**
-     * Add a new book to the library
-     * @param book book to add
-     * @return request status
+     * Adds a new book to the library.
+     * Admin only access.
+     * @param book Book to add.
+     * @return Saved book entity.
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')") // Only admins can read books
@@ -104,9 +114,10 @@ public class BookController {
     }
 
     /**
-     * Delete a book by ID
-     * @param id of the book to delete
-     * @return request status
+     * Deletes a book from the library.
+     * Admin only access.
+     * @param id ID of the book to delete.
+     * @return No content if successful.
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')") // Only admins can delete books
@@ -114,8 +125,4 @@ public class BookController {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }
-
-
