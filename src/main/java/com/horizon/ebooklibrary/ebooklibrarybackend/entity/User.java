@@ -1,5 +1,7 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,6 +53,9 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserBook> userBooks;
+
     /**
      * Constructor to create a new user with email and password
      * @param email User's email
@@ -62,5 +67,7 @@ public class User {
         this.password = password;
         this.role = (role != null) ? role : Role.USER; // Defaults role if null
     }
+
+
 
 }
