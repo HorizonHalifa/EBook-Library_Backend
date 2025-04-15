@@ -1,57 +1,94 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.service;
 
 import com.horizon.ebooklibrary.ebooklibrarybackend.entity.Book;
+import com.horizon.ebooklibrary.ebooklibrarybackend.entity.User;
+import com.horizon.ebooklibrary.ebooklibrarybackend.entity.UserBook;
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.BookRepository;
+import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserBookRepository;
+import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserRepository;
+import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
 
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Service class for managing books and per-user read/unread status.
+ */
 @RequiredArgsConstructor
 @Service
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final UserBookRepository userBookRepository;
+    private final UserRepository userRepository;
+    private final JwtUtils jwtUtils;
+    private final HttpServletRequest request;
 
     /**
-     * Fetch all books (both read and unread)
-     * @return List of all books
+     * Get a list of all books in the library (not per-user).
+     * @return List of all books in the system
      */
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
 
     /**
-     * Fetch all read books
+     * Retrieve all books that the current authenticated user has marked as read.
      * @return List of read books
      */
     public List<Book> getReadBooks() {
-        return bookRepository.findByReadTrue();
+        User user = extractUserFromRequest();
+        return userBookRepository.findAllByUserAndReadTrue(user).stream()
+                .map(UserBook::getBook)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Fetch all unread books
-     * @return List of unread books
+     * Retrieve all books that the current authenticated user has not read.
+     * @return List of unread books.
      */
     public List<Book> getUnreadBooks() {
-        return bookRepository.findByReadFalse();
+        User user = extractUserFromRequest();
+        return userBookRepository.findAllByUserAndReadFalse(user).stream()
+                .map(UserBook::getBook)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Fetch book by id
-     * @param id the id to search
-     * @return book that has the requested id
+     * Marks a specific book as read for the current user.
+     * @param bookId ID of the book to mark
+     */
+    public void markAsRead(Long bookId) {
+        updateUserBookStatus(bookId, true);
+    }
+
+    /**
+     * Marks a specific book as unread for the current user.
+     * @param bookId ID of the book to mark.
+     */
+    public void markAsUnread(Long bookId) {
+        updateUserBookStatus(bookId, false);
+    }
+
+
+    /**
+     * Get a book by it's ID.
+     * @param id Book ID
+     * @return an optional containing the book, or empty if not found
      */
     public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
     }
 
     /**
-     * Add a new book to the database
-     * @param book to add
+     * Adds a new book to the library.
+     * @param book the book to add
      * @return the saved book
      */
     public Book addBook(Book book) {
@@ -59,36 +96,48 @@ public class BookService {
     }
 
     /**
-     * Mark book as read
-     * @param id book to mark as read
-     */
-    public void markAsRead(Long id) {
-        Optional<Book> optionalBook = bookRepository.findById(id);
-        if(optionalBook.isPresent()) {
-            Book book = optionalBook.get();
-            book.setRead(true);
-            bookRepository.save(book);
-        }
-    }
-
-    /**
-     * Mark book as unread
-     * @param id book to mark unread
-     */
-    public void markAsUnread(Long id) {
-        Optional<Book> optionalBook = bookRepository.findById(id);
-        if(optionalBook.isPresent()) {
-            Book book = optionalBook.get();
-            book.setRead(false);
-            bookRepository.save(book);
-        }
-    }
-
-    /**
-     * Delete book by id
-     * @param id to delete by
+     * Deletes a book by ID.
+     * @param id the Id of the book to delete
      */
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
+
+    /**
+     * Helper method to update the read/unread status of a book for the authenticated user.
+     * @param bookId ID of the book to change
+     * @param read true = mark as read; false = mark as unread
+     */
+    private void updateUserBookStatus(Long bookId, boolean read) {
+        User user = extractUserFromRequest();
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Book not found with ID: " + bookId));
+
+        UserBook userBook = userBookRepository.findByUserAndBook(user, book)
+                .orElse(UserBook.builder()
+                        .user(user)
+                        .book(book)
+                        .build());
+
+        userBook.setRead(read);
+        userBookRepository.save(userBook);
+    }
+
+    /**
+     * Extracts the currently authenticated user from the JWT token in the Authorization header.
+     * @return Authenticated User entity
+     */
+    private User extractUserFromRequest() {
+        String authHeader = request.getHeader("Authorization");
+        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7); // After "Bearer "
+        String email = jwtUtils.getEmailFromToken(token);
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+
 }
