@@ -1,5 +1,7 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -54,6 +56,7 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<UserBook> userBooks;
 
     /**

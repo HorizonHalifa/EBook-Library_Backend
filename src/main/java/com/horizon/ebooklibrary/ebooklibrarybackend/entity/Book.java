@@ -1,5 +1,7 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -48,5 +50,6 @@ public class Book {
     private boolean read = false; // Default: Unread
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<UserBook> userBooks;
 }
