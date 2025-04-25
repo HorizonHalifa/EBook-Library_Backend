@@ -4,6 +4,7 @@ import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtAuthFilter;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -46,8 +47,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // signup / login
-                        .requestMatchers("/books/upload").hasRole("Admin") // only admin can upload books
-                        .requestMatchers("/books/**").permitAll() // allow everyone to view books
+                        .requestMatchers(HttpMethod.GET, "/books/**").permitAll() // allow everyone to view books
+                        .requestMatchers(HttpMethod.POST, "/books/upload").hasRole("ADMIN") // only admins can upload
                         .requestMatchers("/files/**").permitAll() // allow public access to served PDFs
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin only access
                         .anyRequest().authenticated() // Protect all other endpoints
