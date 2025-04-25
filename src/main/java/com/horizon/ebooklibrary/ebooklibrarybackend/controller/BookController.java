@@ -132,18 +132,25 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Book> uploadBook(@RequestPart("book")BookUploadRequest request, @RequestPart("file")MultipartFile file) {
+    @PostMapping("/upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Book> uploadBook(@RequestPart("book")BookUploadRequest request,
+                                           @RequestPart("coverImage")MultipartFile coverImage,
+                                           @RequestPart("pdfFile")MultipartFile file) {
 
         try {
             // Save the uploaded PDF file and get it's public URL
             String pdfUrl = uploadService.savePdf(file);
+
+            // Save the cover image (supports .jpg and .png)
+            String coverUrl = uploadService.saveImage(coverImage);
 
             // Build a new book entity
             Book book = Book.builder()
                     .title(request.getTitle())
                     .author(request.getAuthor())
                     .description(request.getDescription())
-                    .coverUrl(request.getCoverUrl())
+                    .coverUrl(coverUrl)
                     .pdfUrl(pdfUrl)
                     .read(false) // new books are unread by default
                     .build();

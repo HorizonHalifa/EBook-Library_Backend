@@ -50,4 +50,26 @@ public class UploadService {
         // Return public URL to access the file
         return urlPrefix + filename;
     }
+
+    public String saveImage(MultipartFile file) throws IOException {
+        // Ensure uploads folder exists
+        Path uploadPath = Paths.get(uploadDir);
+        if(!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        // Validate filename and extension
+        String filename = file.getOriginalFilename();
+        if (filename == null ||
+                !(filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg") || filename.toLowerCase().endsWith(".png"))) {
+            throw new IllegalArgumentException("Only JPG and PNG images are supported.");
+        }
+
+        // Save the file
+        Path filePath = uploadPath.resolve(filename);
+        file.transferTo(filePath.toFile());
+
+        // Return public URL
+        return urlPrefix + filename;
+    }
 }
