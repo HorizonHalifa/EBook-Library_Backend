@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // signup / login
+                        .requestMatchers("/books/upload").hasRole("Admin") // only admin can upload books
                         .requestMatchers("/books/**").permitAll() // allow everyone to view books
                         .requestMatchers("/files/**").permitAll() // allow public access to served PDFs
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin only access
