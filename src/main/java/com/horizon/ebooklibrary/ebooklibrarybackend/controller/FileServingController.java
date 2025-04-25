@@ -37,7 +37,7 @@ public class FileServingController {
      * @param filename The name of the file to retrieve
      * @return A ResponseEntity containing the PFG as a streamed resource, or an error response
      */
-    @GetMapping("/{filename:.+}")
+    @GetMapping("/{filename:.+}") // Match the filename with a dot in it (like .pdf) and let it include extensions
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
         try {
             /*
