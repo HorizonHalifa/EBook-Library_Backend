@@ -1,7 +1,9 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.controller;
 
+import com.horizon.ebooklibrary.ebooklibrarybackend.dto.BookUploadRequest;
 import com.horizon.ebooklibrary.ebooklibrarybackend.entity.Book;
 import com.horizon.ebooklibrary.ebooklibrarybackend.service.BookService;
+import com.horizon.ebooklibrary.ebooklibrarybackend.service.UploadService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,8 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 public class BookController {
 
     private final BookService bookService;
+    private final UploadService uploadService;
 
     // Read Methods:
 
@@ -125,4 +131,31 @@ public class BookController {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
+
+    public ResponseEntity<Book> uploadBook(@RequestPart("book")BookUploadRequest request, @RequestPart("file")MultipartFile file) {
+
+        try {
+            // Save the uploaded PDF file and get it's public URL
+            String pdfUrl = uploadService.savePdf(file);
+
+            // Build a new book entity
+            Book book = Book.builder()
+                    .title(request.getTitle())
+                    .author(request.getAuthor())
+                    .description(request.getDescription())
+                    .coverUrl(request.getCoverUrl())
+                    .pdfUrl(pdfUrl)
+                    .read(false) // new books are unread by default
+                    .build();
+
+            // Save the book to the database
+            Book savedBook = bookService.addBook(book);
+
+            return ResponseEntity.ok(savedBook);
+        } catch (IOException e) {
+            // If file saving fails
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 }
