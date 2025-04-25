@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 public class UploadService {
 
     // Base folder where uploaded files will be stored (defined in application.properties)
-    @Value("${upload.directory}")
+    @Value("${upload.dir}")
     private String uploadDir;
 
     // Base URL prefix for serving files

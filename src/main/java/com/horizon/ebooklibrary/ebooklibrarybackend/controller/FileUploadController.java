@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
 /**
  * Controller class that:
@@ -43,7 +44,7 @@ public class FileUploadController {
 
         try {
             // Get original file name and clean it
-            String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+            String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
             // Create the upload path if it doesn't exist
             Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
