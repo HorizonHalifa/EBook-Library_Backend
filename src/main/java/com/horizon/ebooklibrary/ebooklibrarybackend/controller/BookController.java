@@ -169,7 +169,6 @@ public class BookController {
                     .description(description)
                     .coverUrl(coverUrl)
                     .pdfUrl(pdfUrl)
-                    .read(false) // new books are unread by default
                     .build();
 
             // Save the book to the database

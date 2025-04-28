@@ -72,4 +72,20 @@ public class UploadService {
         // Return public URL
         return urlPrefix + filename;
     }
+
+    /**
+     * Deletes a file from the upload directory
+     * @param fileUrl the public URL of the uploaded file
+     * @throws IOException if deletion fails
+     */
+    public void deleteFile(String fileUrl) throws IOException {
+        // Remove the URL prefix to get the filename
+        String filename = fileUrl.replace(urlPrefix, "");
+
+        //Build the full absolute path
+        Path filePath = Paths.get("").toAbsolutePath().resolve(uploadDir).resolve(filename);
+
+        // Delete the file if it exists
+        Files.deleteIfExists(filePath);
+    }
 }

@@ -1,5 +1,8 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,6 +42,7 @@ public class UserBook {
      * Many UseBook entries can point to the same User.
      */
     @ManyToOne(optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     /**
@@ -46,6 +50,7 @@ public class UserBook {
      * Many UserBook entries can point to the same Book.
      */
     @ManyToOne(optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Book book;
 
     /**

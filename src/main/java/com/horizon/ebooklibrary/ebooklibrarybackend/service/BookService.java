@@ -8,8 +8,10 @@ import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserBookRepositor
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
 
+import org.postgresql.plugin.AuthenticationPlugin;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final UserBookRepository userBookRepository;
     private final UserRepository userRepository;
+    private final UploadService uploadService;
     private final JwtUtils jwtUtils;
     private final HttpServletRequest request;
 
@@ -100,6 +103,20 @@ public class BookService {
      * @param id the Id of the book to delete
      */
     public void deleteBook(Long id) {
+        Book book = bookRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Book not found with ID: " + id));
+
+        try{
+            // Delete the cover image file
+            uploadService.deleteFile(book.getCoverUrl());
+
+            // Delete the PDF file
+            uploadService.deleteFile(book.getPdfUrl());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete the associated files for book: " + book.getTitle(), e);
+        }
+
+        // Delete the book from the database
         bookRepository.deleteById(id);
     }
 

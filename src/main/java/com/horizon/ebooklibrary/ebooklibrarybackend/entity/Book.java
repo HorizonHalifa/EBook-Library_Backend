@@ -46,9 +46,6 @@ public class Book {
     @Column(nullable = false)
     private String pdfUrl; // URL to access a book file
 
-    @Column(nullable = false)
-    private boolean read = false; // Default: Unread
-
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<UserBook> userBooks;
