@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Data Transfer Object (DTO) for uploading a new book with metadate (excluding file).
- * Used in multipcart/form.data requests when admins upload a book + it's PDF together.
+ * Data Transfer Object (DTO) for uploading a new book with metadata (excluding file).
+ * Used in multipart/form.data requests when admins upload a book + it's PDF together.
  */
 @Data
 @Builder
