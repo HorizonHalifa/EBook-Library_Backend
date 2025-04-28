@@ -177,8 +177,6 @@ public class BookController {
 
             return ResponseEntity.ok(savedBook);
         } catch (IOException e) {
-            //TODO: remove backlogging
-            e.printStackTrace();
             // If file saving fails
             return ResponseEntity.internalServerError().build();
         }
