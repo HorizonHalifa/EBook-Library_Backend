@@ -132,24 +132,41 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
+
+    /**
+     * Uploads a new book to the library.
+     * <p>
+     * This method accepts:
+     * - title, author, description as text fields
+     * - coverImage as a JPEG or PNG
+     * - pdfFile as the book PDF
+     * <p>
+     * Only admins can upload books
+     * @param title The title of the book
+     * @param author the Author of the book
+     * @param description a short description of the book
+     * @param coverImage the cover image file (jpg/png)
+     * @param file the PDF file
+     * @return the saved book entity if successful
+     */
     @PostMapping("/upload")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Book> uploadBook(@RequestPart("book")BookUploadRequest request,
+    public ResponseEntity<Book> uploadBook(@RequestPart("tile") String title,
+                                           @RequestPart("author") String author,
+                                           @RequestPart("description") String description,
                                            @RequestPart("coverImage")MultipartFile coverImage,
                                            @RequestPart("pdfFile")MultipartFile file) {
 
         try {
-            // Save the uploaded PDF file and get it's public URL
-            String pdfUrl = uploadService.savePdf(file);
-
-            // Save the cover image (supports .jpg and .png)
+            // Save the uploaded files and get their public URLs
             String coverUrl = uploadService.saveImage(coverImage);
+            String pdfUrl = uploadService.savePdf(file);
 
             // Build a new book entity
             Book book = Book.builder()
-                    .title(request.getTitle())
-                    .author(request.getAuthor())
-                    .description(request.getDescription())
+                    .title(title)
+                    .author(author)
+                    .description(description)
                     .coverUrl(coverUrl)
                     .pdfUrl(pdfUrl)
                     .read(false) // new books are unread by default
