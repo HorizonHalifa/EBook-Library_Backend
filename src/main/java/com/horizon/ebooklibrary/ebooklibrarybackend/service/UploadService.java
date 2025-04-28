@@ -32,7 +32,7 @@ public class UploadService {
      */
     public String savePdf(MultipartFile file) throws IOException {
         // Ensure uploads folder exists
-        Path uploadPath = Paths.get(uploadDir);
+        Path uploadPath = Paths.get("").toAbsolutePath().resolve(uploadDir);
         if(!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -53,7 +53,7 @@ public class UploadService {
 
     public String saveImage(MultipartFile file) throws IOException {
         // Ensure uploads folder exists
-        Path uploadPath = Paths.get(uploadDir);
+        Path uploadPath = Paths.get("").toAbsolutePath().resolve(uploadDir);
         if(!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }

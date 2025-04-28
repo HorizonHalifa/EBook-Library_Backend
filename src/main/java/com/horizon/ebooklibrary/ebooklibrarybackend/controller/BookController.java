@@ -151,7 +151,7 @@ public class BookController {
      */
     @PostMapping("/upload")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Book> uploadBook(@RequestPart("tile") String title,
+    public ResponseEntity<Book> uploadBook(@RequestPart("title") String title,
                                            @RequestPart("author") String author,
                                            @RequestPart("description") String description,
                                            @RequestPart("coverImage")MultipartFile coverImage,
@@ -177,6 +177,8 @@ public class BookController {
 
             return ResponseEntity.ok(savedBook);
         } catch (IOException e) {
+            //TODO: remove backlogging
+            e.printStackTrace();
             // If file saving fails
             return ResponseEntity.internalServerError().build();
         }
