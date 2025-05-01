@@ -7,6 +7,9 @@ import com.horizon.ebooklibrary.ebooklibrarybackend.repository.BookRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserBookRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
+import com.horizon.ebooklibrary.ebooklibrarybackend.websocket.BookNotificationPublisher;
+
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import org.postgresql.plugin.AuthenticationPlugin;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,7 @@ public class BookService {
     private final UploadService uploadService;
     private final JwtUtils jwtUtils;
     private final HttpServletRequest request;
+    private final BookNotificationPublisher bookNotificationPublisher;
 
     /**
      * Get a list of all books in the library (not per-user).
@@ -90,12 +94,16 @@ public class BookService {
     }
 
     /**
-     * Adds a new book to the library.
+     * Adds a new book to the library & sends a notification.
      * @param book the book to add
      * @return the saved book
      */
     public Book addBook(Book book) {
-        return bookRepository.save(book);
+         Book saved = bookRepository.save(book);
+
+         bookNotificationPublisher.publishNewBook(saved);
+
+        return saved;
     }
 
     /**

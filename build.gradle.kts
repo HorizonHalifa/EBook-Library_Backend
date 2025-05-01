@@ -24,6 +24,11 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation") // Input validation
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework:spring-messaging")
+
+	// WebSockets and ActiveMQ JMS Broker
+	implementation("org.springframework.boot:spring-boot-starter-activemq")
+	implementation("org.springframework.boot:spring-boot-starter-websocket")
 
 	// Lombok (Reduces Boilerplate Code)
 	compileOnly("org.projectlombok:lombok:1.18.30")
@@ -38,9 +43,6 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
 	implementation("org.postgresql:postgresql:42.6.0")
-
-	// H2 Database (Temporary database for testing)
-	runtimeOnly("com.h2database:h2")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")

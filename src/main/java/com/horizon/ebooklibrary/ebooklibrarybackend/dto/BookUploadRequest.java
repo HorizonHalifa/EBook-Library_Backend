@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+//TODO: Probably just delete this whole directory ?
 /**
  * Data Transfer Object (DTO) for uploading a new book with metadata (excluding file).
  * Used in multipart/form.data requests when admins upload a book + it's PDF together.
