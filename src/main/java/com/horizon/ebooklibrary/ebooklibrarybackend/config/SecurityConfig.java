@@ -44,13 +44,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/ws/**") // Ignore CSRF for WebSockets
+                        .disable()) // Disable CSRF for simplicity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // signup / login
                         .requestMatchers(HttpMethod.GET, "/books/**").permitAll() // allow everyone to view books
                         .requestMatchers(HttpMethod.POST, "/books/upload").hasRole("ADMIN") // only admins can upload
                         .requestMatchers("/files/**").permitAll() // allow public access to served PDFs
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin only access
+                        .requestMatchers("/ws/**").permitAll() // permit WebSocket endpoint
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session
