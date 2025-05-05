@@ -7,11 +7,8 @@ import com.horizon.ebooklibrary.ebooklibrarybackend.repository.BookRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserBookRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
-import com.horizon.ebooklibrary.ebooklibrarybackend.websocket.BookNotificationPublisher;
+import com.horizon.ebooklibrary.ebooklibrarybackend.event.BookNotificationPublisher;
 
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-
-import org.postgresql.plugin.AuthenticationPlugin;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

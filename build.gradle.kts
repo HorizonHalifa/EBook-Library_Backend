@@ -26,9 +26,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework:spring-messaging")
 
-	// WebSockets and ActiveMQ JMS Broker
+	//  ActiveMQ JMS Broker
 	implementation("org.springframework.boot:spring-boot-starter-activemq")
-	implementation("org.springframework.boot:spring-boot-starter-websocket")
 
 	// Lombok (Reduces Boilerplate Code)
 	compileOnly("org.projectlombok:lombok:1.18.30")
@@ -41,6 +40,13 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
+	// Firebase Admin SDK
+	implementation("com.google.firebase:firebase-admin:9.2.0")
+
+	// HTTP client
+	implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
 
 	implementation("org.postgresql:postgresql:42.6.0")
 

@@ -27,13 +27,19 @@ import java.util.Objects;
 @RequestMapping("/upload")
 public class FileUploadController {
 
-    // Inject the value of 'upload.dir' from application.properties
+    // Directory on the server where uploaded files will be saved. (from application.properties)
     @Value("${upload.dir}")
     private String uploadDir;
 
+    // Public URL prefix  used to construct file download links
     @Value("${upload.url-prefix}")
     private String urlPrefix;
 
+    /**
+     * Upload a PDF file to the server and return it's public URL.
+     * @param file the uploaded file (must be a non-empty PDF)
+     * @return a 200 OK response with the file URL, or 400/500 on error
+     */
     @PostMapping("/pdf")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> uploadPdf(@RequestParam("file") MultipartFile file) {
@@ -50,13 +56,11 @@ public class FileUploadController {
             Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
             Files.createDirectories(uploadPath);
 
-            // Resolve the full file path
+            // Define full target patch and write file
             Path filePath = uploadPath.resolve(originalFileName);
-
-            // Copy the file to the destination
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Construct public URL
+            // Generate public URL
             String fileUrl = urlPrefix + originalFileName;
 
             return ResponseEntity.ok(fileUrl);

@@ -17,18 +17,18 @@ import java.util.Map;
 public class JwtUtils {
 
     // Access tokens expire in 15 minutes, refresh tokens expire in 2 hours.
-    private static final long EXPIRATION_TIME_15 = 900000; // 15 minutes expiry
-    private static final long EXPIRATION_TIME_2HR = 7200000; // 2 hours expiry
+    private static final long EXPIRATION_TIME_15 = 900000; // 15 minutes expiry in ms value
+    private static final long EXPIRATION_TIME_2HR = 7200000; // 2 hours expiry in ms value
 
-    // HMAC with SHA-256 is used for signing JWTs
+    // Secret ket used to sign tokens. Must make sure it's 256 bits (32-byte Base64 string)
     private static final String SECRET = "+pu/Q8KgBbnGUJ/MKA/meHBAAekvMt+Y+CzD+GHI/fw=";
+    // Convert Base64-encoded secret to HMAC SHA key
     private final Key secretKey = Keys.hmacShaKeyFor(SECRET.getBytes());
-    //private final Key secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET));
 
     /**
-     * Generates a JWT token for the given user email.
-     * @param user@return A signed JWT token.
-     * @return A signed JWT token.
+     * Generates a short-lived access token for the given user.
+     * @param user the user entity to encode into the token
+     * @return A signed JWT token
      */
     public String generateToken(User user) {
         return Jwts.builder()
@@ -40,6 +40,11 @@ public class JwtUtils {
                 .compact();
     }
 
+    /**
+     * Generates a longer-lived refresh token for the given user.
+     * @param user the user entity to encode
+     * @return a signed JWT refresh token
+     */
     public String generateRefreshToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
@@ -50,9 +55,9 @@ public class JwtUtils {
     }
 
     /**
-     * Extracts the email (subject) from the token.
+     * Extracts the email from the token.
      * @param token the JWT token.
-     * @return The email stored in the token.
+     * @return The email encoded.
      */
     public String getEmailFromToken(String token) {
         return Jwts.parserBuilder()
@@ -66,7 +71,7 @@ public class JwtUtils {
     /**
      * Extracts the user role from the token.
      * @param token the JWT token.
-     * @return The role stored in the token.
+     * @return The role encoded in the token.
      */
     public String getRoleFromToken(String token) {
         return (String) Jwts.parserBuilder()
@@ -90,10 +95,15 @@ public class JwtUtils {
                     .parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
-            return false;
+            return false; // any parse or validation error counts and invalid
         }
     }
 
+    /**
+     * Returns the raw secret key used for signing and validation.
+     * Useful when other components need to parse or verify JWTs.
+     * @return HMAC SHA-256 secret key
+     */
     public Key getSecretKey() {
         return secretKey;
     }
