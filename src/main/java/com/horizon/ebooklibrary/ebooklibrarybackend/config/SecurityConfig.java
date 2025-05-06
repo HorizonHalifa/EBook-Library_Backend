@@ -52,8 +52,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/books/**").permitAll() // allow everyone to view books
                         .requestMatchers(HttpMethod.POST, "/books/upload").hasRole("ADMIN") // only admins can upload
                         .requestMatchers("/files/**").permitAll() // allow public access to served PDFs
+                        .requestMatchers("/notifications/**").hasRole("ADMIN") // allow admin to send push notifications
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin only access
-                        .requestMatchers("/ws/**").permitAll() // permit WebSocket endpoint
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session
