@@ -73,9 +73,6 @@ public class SecurityConfig {
 
     /**
      * Provides the AuthenticationManager for authenticating credentials.
-     * @param authenticationConfiguration
-     * @return
-     * @throws Exception
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
