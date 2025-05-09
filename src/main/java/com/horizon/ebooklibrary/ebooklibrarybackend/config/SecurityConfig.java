@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,15 +45,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/ws/**") // Ignore CSRF for WebSockets
-                        .disable()) // Disable CSRF for simplicity
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // signup / login
                         .requestMatchers(HttpMethod.GET, "/books/**").permitAll() // allow everyone to view books
                         .requestMatchers(HttpMethod.POST, "/books/upload").hasRole("ADMIN") // only admins can upload
                         .requestMatchers("/files/**").permitAll() // allow public access to served PDFs
-                        .requestMatchers("/notifications/**").hasRole("ADMIN") // allow admin to send push notifications
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin only access
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
