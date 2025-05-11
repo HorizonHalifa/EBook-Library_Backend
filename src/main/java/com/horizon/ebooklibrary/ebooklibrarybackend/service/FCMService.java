@@ -7,12 +7,17 @@ import com.google.firebase.messaging.Notification;
 
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Service responsible for sending push notifications using Firebase Cloud Messaging (FCM).
- * This service builds and sends a message to a given device token.
+ * Encapsulates FCM logic to isolate messaging from business logic.
  */
+@Slf4j
 @Service
 public class FCMService {
+
+    public static final String TOPIC_NEW_BOOKS = "new_books";
 
     /**
      * Send a push notification to a given topic
@@ -31,7 +36,7 @@ public class FCMService {
                 .build();
 
         String response = FirebaseMessaging.getInstance().send(message);
-        System.out.println("Sent to topic: " + response);
+        log.info("FCM message sent to topic '{}': {}", topic, response);
     }
 
 }

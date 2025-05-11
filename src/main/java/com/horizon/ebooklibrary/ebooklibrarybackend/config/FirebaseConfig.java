@@ -23,6 +23,7 @@ public class FirebaseConfig {
     @PostConstruct
     public void initialize() {
         try {
+            // Assume file is in src/main/resources/
             InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("ebooklibrarybackend-firebase-adminsdk-fbsvc-3baa5ed9ea.json");
 
             if(serviceAccount == null) {

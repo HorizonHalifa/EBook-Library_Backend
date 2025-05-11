@@ -8,11 +8,13 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Listens for NewBookEvent and sends a broadcast push notification to all users.
  * Subscribed to the "new_books" topic via Firebase Cloud Messaging.
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class NewBookEventListener {
@@ -24,12 +26,13 @@ public class NewBookEventListener {
         Book book = event.getBook();
         try {
             fcmService.sendToTopic(
-                    "new_books",
+                    FCMService.TOPIC_NEW_BOOKS,
                     "New Book: " + book.getTitle(),
                     "By " + book.getAuthor() + " - now in the library!"
             );
+            log.info("Notification sent for book '{}'", book.getTitle());
         } catch (FirebaseMessagingException e) {
-            e.printStackTrace();
+            log.error("Failed to send FCM notification for new book '{}': {}", book.getTitle(), e.getMessage(), e);
         }
     }
 }
