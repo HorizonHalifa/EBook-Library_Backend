@@ -6,9 +6,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
 
 /*
  * Utility class for handling JWT operations such as token generation and validation.
@@ -21,7 +19,7 @@ public class JwtUtils {
     private static final long EXPIRATION_TIME_2HR = 7200000; // 2 hours expiry in ms value
 
     // Secret ket used to sign tokens
-    private static final String SECRET = SecretKey.getSecretKey();
+    private static final String SECRET = JwtSecretLoader.loadJwtSecret();
     // Convert Base64-encoded secret to HMAC SHA key
     private final Key secretKey = Keys.hmacShaKeyFor(SECRET.getBytes());
 

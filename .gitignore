@@ -37,3 +37,7 @@ out/
 .vscode/
 /src/main/resources/ebooklibrarybackend-firebase-adminsdk-fbsvc-3baa5ed9ea.json
 /src/main/java/com/horizon/ebooklibrary/ebooklibrarybackend/security/SecretKey.java
+# secrets
+secrets/
+*.json
+*.key
