@@ -28,7 +28,7 @@ public class FileServingController {
     /**
      * Serves a PDF file from the local upload directory
      * <p>
-     * URL: GET /files/{filesname}
+     * URL: GET /files/{filename}
      * Example: /files/cat_wizard.pdf
      * <p>
      * This allows  public access to previously uploaded files,
