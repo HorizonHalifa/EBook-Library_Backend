@@ -1,6 +1,5 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.controller;
 
-import com.horizon.ebooklibrary.ebooklibrarybackend.dto.BookUploadRequest;
 import com.horizon.ebooklibrary.ebooklibrarybackend.entity.Book;
 import com.horizon.ebooklibrary.ebooklibrarybackend.service.BookService;
 import com.horizon.ebooklibrary.ebooklibrarybackend.service.UploadService;
