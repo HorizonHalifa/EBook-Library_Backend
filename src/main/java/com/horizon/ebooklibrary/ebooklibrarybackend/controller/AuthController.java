@@ -1,7 +1,6 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.controller;
 
 import com.horizon.ebooklibrary.ebooklibrarybackend.entity.User;
-import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
 import com.horizon.ebooklibrary.ebooklibrarybackend.service.UserService;
 import org.springframework.http.ResponseEntity;
