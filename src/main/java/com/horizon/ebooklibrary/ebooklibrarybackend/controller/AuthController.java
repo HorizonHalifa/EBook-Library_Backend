@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
  * - Log in users and return JWT tokens
  * - Refresh access tokens using refresh tokens.
  */
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor

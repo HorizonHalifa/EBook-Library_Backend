@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
  * Defines which endpoints are public and which are protected.
  * Applies @PreAuthorize checks on methods using @EnableMethodSecurity.
  */
+@SuppressWarnings("unused")
 @Configuration
 @RequiredArgsConstructor
 @EnableMethodSecurity // Enables @PreAuthorize role-based security

@@ -13,6 +13,7 @@ import java.nio.file.Paths;
  * Service responsible for handling file uploads.
  * It saves files to the local filesystem and returns their public URL.
  */
+@SuppressWarnings("unused")
 @Service
 public class UploadService {
 

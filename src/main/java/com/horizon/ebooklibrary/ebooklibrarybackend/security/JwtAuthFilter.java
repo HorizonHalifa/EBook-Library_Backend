@@ -1,7 +1,5 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.security;
 
-import com.horizon.ebooklibrary.ebooklibrarybackend.entity.Role;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,9 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
+import org.springframework.lang.NonNull;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -32,6 +30,7 @@ import lombok.RequiredArgsConstructor;
  * If the token is expired or invalid, a 401 Unauthorized response is returned,
  * this ensures that only authenticated users can access protected endpoints.
  */
+@SuppressWarnings("unused")
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -43,7 +42,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      * Extracts and validate JWT, sets authentication context if valid.
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
+
         // Extract Authentication header
         String authHeader = request.getHeader("Authorization");
 

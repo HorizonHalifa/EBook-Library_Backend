@@ -11,6 +11,7 @@ import java.util.Date;
 /*
  * Utility class for handling JWT operations such as token generation and validation.
  */
+@SuppressWarnings({"LombokGetterMayBeUsed", "unused"})
 @Component
 public class JwtUtils {
 
@@ -66,19 +67,21 @@ public class JwtUtils {
                 .getSubject();
     }
 
-    /**
-     * Extracts the user role from the token.
-     * @param token the JWT token.
-     * @return The role encoded in the token.
-     */
-    public String getRoleFromToken(String token) {
-        return (String) Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("authorities", String.class);
-    }
+// --Commented out by Inspection START (5/12/2025 7:15 PM):
+//    /**
+//     * Extracts the user role from the token.
+//     * @param token the JWT token.
+//     * @return The role encoded in the token.
+//     */
+//    public String getRoleFromToken(String token) {
+//        return (String) Jwts.parserBuilder()
+//                .setSigningKey(secretKey)
+//                .build()
+//                .parseClaimsJws(token)
+//                .getBody()
+//                .get("authorities", String.class);
+//    }
+// --Commented out by Inspection STOP (5/12/2025 7:15 PM)
 
     /**
      * Validates the given JWT token.

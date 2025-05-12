@@ -1,6 +1,5 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.controller;
 
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -18,6 +17,7 @@ import java.nio.file.Paths;
 /**
  * Controller class to serve uploaded PDF files from the local filesystem
  */
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/files")
 public class FileServingController {

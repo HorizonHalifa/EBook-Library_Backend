@@ -8,6 +8,7 @@ import java.nio.file.Paths;
  * Class made in order to simplifier and separate the big logic in JwtUtils.
  * This class will be responsible to load the key used for the backend JWT token creation encryption.
  */
+@SuppressWarnings("unused")
 public class JwtSecretLoader {
 
     public static String loadJwtSecret() {

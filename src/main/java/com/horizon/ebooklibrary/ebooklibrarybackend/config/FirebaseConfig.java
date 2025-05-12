@@ -6,14 +6,15 @@ import com.google.firebase.FirebaseOptions;
 
 import org.springframework.context.annotation.Configuration;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
 /**
  * Configuration class to initialize Firebase Admin SDK using service account credentials.
  */
+@SuppressWarnings("unused")
 @Configuration
 public class FirebaseConfig {
 
@@ -23,19 +24,24 @@ public class FirebaseConfig {
     @PostConstruct
     public void initialize() {
         try {
-            // Assume file is in src/main/resources/
-            InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("secrets/ebooklibrarybackend-firebase-adminsdk-fbsvc-3baa5ed9ea.json");
 
-            if(serviceAccount == null) {
-                throw new IllegalStateException("Firebase service account file not found in resources.");
+            String path = System.getenv("FIREBASE_CREDENTIALS_PATH");
+            if(path == null || path.isBlank()) {
+                throw new IllegalStateException("FIREBASE_CREDENTIALS_PATH env variable is not set.");
             }
+
+            FileInputStream serviceAccount = new FileInputStream(path);
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
 
-            FirebaseApp.initializeApp(options);
+            if(FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options);
+            }
+
             System.out.println("Firebase has been initialized.");
+
         } catch( IOException e) {
             throw new RuntimeException("Failed to initialize Firebase.");
         }

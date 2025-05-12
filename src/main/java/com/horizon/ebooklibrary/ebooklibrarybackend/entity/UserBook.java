@@ -21,6 +21,7 @@ import lombok.Setter;
  * including the user's reading status for that specific book.
  * This allow sus to track which books each user has read or not.
  */
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "user_books")
 @Getter

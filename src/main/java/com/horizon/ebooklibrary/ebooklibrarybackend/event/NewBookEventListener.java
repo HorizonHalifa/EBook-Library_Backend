@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  * Listens for NewBookEvent and sends a broadcast push notification to all users.
  * Subscribed to the "new_books" topic via Firebase Cloud Messaging.
  */
+@SuppressWarnings("unused")
 @Slf4j
 @Component
 @RequiredArgsConstructor

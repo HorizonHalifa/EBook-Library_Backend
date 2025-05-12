@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * Service class for managing books and per-user read/unread status.
  */
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 @Service
 public class BookService {

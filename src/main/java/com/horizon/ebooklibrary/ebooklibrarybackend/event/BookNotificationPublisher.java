@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
  * Publishes internal Spring events related to book actions.
  * Currently used to publish NewBookEvent when a new book is uploaded.
  */
+@SuppressWarnings("unused")
 @Component
 @RequiredArgsConstructor
 public class BookNotificationPublisher {

@@ -23,6 +23,7 @@ import java.util.Objects;
  * - Saves files to the uploads/ folder.
  * - Returns the URL where the file can be accessed.
  */
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/upload")
 public class FileUploadController {

@@ -15,6 +15,7 @@ import lombok.Setter;
  * Represents a user entity in the system.
  * This class is mapped to a "users" table in the database.
  */
+@SuppressWarnings("unused")
 @Getter
 @Entity
 @Setter

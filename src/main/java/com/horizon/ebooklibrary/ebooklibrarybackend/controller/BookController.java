@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
  * Allows authenticated users to mark books as read/unread.
  * Restricts book creation and deletion to admin users only.
  */
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor

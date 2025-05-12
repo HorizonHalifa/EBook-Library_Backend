@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * Service class that handles user authentication and registration
  */
+@SuppressWarnings("unused")
 @Service
 @RequiredArgsConstructor
 public class UserService {

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * Service responsible for sending push notifications using Firebase Cloud Messaging (FCM).
  * Encapsulates FCM logic to isolate messaging from business logic.
  */
+@SuppressWarnings("unused")
 @Slf4j
 @Service
 public class FCMService {
