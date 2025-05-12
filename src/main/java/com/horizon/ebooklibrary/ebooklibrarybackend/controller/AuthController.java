@@ -76,11 +76,16 @@ public class AuthController {
      * @param request JSON body with "refreshToken" field.
      * @return New access token or 401 error.
      */
-    @PostMapping("/refresh-token")
+    @PostMapping("/refresh")
     public ResponseEntity<Map<String, String>> refreshToken(@RequestBody Map<String, String> request) {
-        String refreshToken =request.get("refreshToken");
+        String refreshToken = request.get("refreshToken");
 
         try {
+            // Validate token first (signature and expiration)
+            if(!jwtUtils.validateToken(refreshToken)) {
+                return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired refresh token"));
+            }
+
             String email = jwtUtils.getEmailFromToken(refreshToken);
             Optional<User> optionalUser = userService.findByEmail(email);
 
