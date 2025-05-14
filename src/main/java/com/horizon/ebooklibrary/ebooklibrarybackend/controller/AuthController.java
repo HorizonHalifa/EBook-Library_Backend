@@ -1,5 +1,6 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.controller;
 
+import com.horizon.ebooklibrary.ebooklibrarybackend.dto.LoginResponse;
 import com.horizon.ebooklibrary.ebooklibrarybackend.entity.User;
 import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
 import com.horizon.ebooklibrary.ebooklibrarybackend.service.UserService;
@@ -48,21 +49,19 @@ public class AuthController {
      */
     // LOGIN Endpoint
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
+    public ResponseEntity<?> login(@RequestBody User user) {
         // Call authenticate() method, which returns the JWT token if successful.
         String token = userService.authenticate(user.getEmail(), user.getPassword());
 
         if(token != null) { // if authentication was successful
-            Optional<User> optionalUser = userService.findByEmail(user.getEmail());
+            Optional<User> optionalUser = userService.findByEmail(user.getEmail()); //findByEmail() returns Optional<User> - full user record from DB.
 
             if(optionalUser.isPresent()) {
                 User existingUser = optionalUser.get();
                 String refreshToken= jwtUtils.generateRefreshToken(existingUser);
+                String role = existingUser.getRole().name(); // Will return "ADMIN" or "USER"
 
-                return ResponseEntity.ok(Map.of(
-                        "access token", token,
-                        "refresh token", refreshToken
-                ));
+                return ResponseEntity.ok(new LoginResponse(token, refreshToken, role));
             } else {
                 return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
             }
