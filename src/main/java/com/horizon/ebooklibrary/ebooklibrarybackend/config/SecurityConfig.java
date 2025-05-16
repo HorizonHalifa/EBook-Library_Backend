@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll() // signup / login
                         .requestMatchers(HttpMethod.GET, "/books/**").permitAll() // allow everyone to view books
                         .requestMatchers(HttpMethod.POST, "/books/upload").hasRole("ADMIN") // only admins can upload
+                        .requestMatchers(HttpMethod.DELETE, "/books/**").hasRole("ADMIN") //only admins can delete
                         .requestMatchers("/files/**").permitAll() // allow public access to served PDFs
                         .requestMatchers("/admin/**").hasRole("ADMIN") // admin only access
                         .anyRequest().authenticated() // Protect all other endpoints

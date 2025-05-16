@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.net.URL;
 
 /**
  * Service responsible for handling file uploads.
@@ -80,11 +81,12 @@ public class UploadService {
      * @throws IOException if deletion fails
      */
     public void deleteFile(String fileUrl) throws IOException {
-        // Remove the URL prefix to get the filename
-        String filename = fileUrl.replace(urlPrefix, "");
+        // Extract just the file name safely
+        String filename = Paths.get(new URL(fileUrl).getPath()).getFileName().toString();
 
         //Build the full absolute path
-        Path filePath = Paths.get("").toAbsolutePath().resolve(uploadDir).resolve(filename);
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path filePath = uploadPath.resolve(filename).normalize();
 
         // Delete the file if it exists
         Files.deleteIfExists(filePath);
