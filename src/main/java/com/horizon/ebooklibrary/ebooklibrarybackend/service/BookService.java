@@ -123,7 +123,7 @@ public class BookService {
     }
 
     /**
-     * Deletes a book by ID.
+     * Deletes a book by ID along with all associated UserBook records and uploaded files.
      * @param id the Id of the book to delete
      */
     public void deleteBook(Long id) {
@@ -136,12 +136,13 @@ public class BookService {
 
             // Delete the PDF file
             uploadService.deleteFile(book.getPdfUrl());
+
         } catch (IOException e) {
             throw new RuntimeException("Failed to delete the associated files for book: " + book.getTitle(), e);
         }
 
-        // Delete the book from the database
-        bookRepository.deleteById(id);
+        // Delete the book entity (this triggers deletion of associated UserBook entries due to CascadeType.ALL)
+        bookRepository.delete(book);
     }
 
     /**
