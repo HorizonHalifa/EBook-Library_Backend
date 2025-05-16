@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
@@ -89,9 +90,9 @@ public class BookController {
      * @return Success message.
      */
     @PutMapping("/{id}/mark-read")
-    public ResponseEntity<String> markBookAsRead(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> markBookAsRead(@PathVariable Long id) {
         bookService.markAsRead(id);
-        return ResponseEntity.ok("Book marked as read.");
+        return ResponseEntity.ok(Map.of("message", "Book marked as read"));
     }
 
     /**
@@ -100,24 +101,12 @@ public class BookController {
      * @return Success message.
      */
     @PutMapping("/{id}/mark-unread")
-    public ResponseEntity<String> markBookAsUnread(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> markBookAsUnread(@PathVariable Long id) {
         bookService.markAsUnread(id);
-        return ResponseEntity.ok("Book marked as unread.");
+        return ResponseEntity.ok(Map.of("message", "Book marked as unread"));
     }
 
     // Admin Methods:
-
-    /**
-     * Adds a new book to the library.
-     * Admin only access.
-     * @param book Book to add.
-     * @return Saved book entity.
-     */
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')") // Only admins can read books
-    public ResponseEntity<Book> addBook(@RequestBody Book book) {
-        return ResponseEntity.ok(bookService.addBook(book));
-    }
 
     /**
      * Deletes a book from the library.

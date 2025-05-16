@@ -12,6 +12,7 @@ import com.horizon.ebooklibrary.ebooklibrarybackend.event.BookNotificationPublis
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -97,11 +98,28 @@ public class BookService {
      * @return the saved book
      */
     public Book addBook(Book book) {
-         Book saved = bookRepository.save(book);
+        Book savedBook = bookRepository.save(book);
 
-         bookNotificationPublisher.publishNewBook(saved);
+        // Add to user_books as unread for all users
+        List<User> users = userRepository.findAll();
+        List<UserBook> userBooks = new ArrayList<>();
 
-        return saved;
+        for(User user : users) {
+            UserBook userBook = UserBook.builder()
+                    .user(user)
+                    .book(savedBook)
+                    .read(false)
+                    .build();
+            userBooks.add(userBook);
+        }
+
+        userBookRepository.saveAll(userBooks);
+
+
+        // Trigger new book FCM push notification
+        bookNotificationPublisher.publishNewBook(savedBook);
+
+        return savedBook;
     }
 
     /**

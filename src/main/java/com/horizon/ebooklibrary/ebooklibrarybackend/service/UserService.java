@@ -1,19 +1,26 @@
 package com.horizon.ebooklibrary.ebooklibrarybackend.service;
 
+import com.horizon.ebooklibrary.ebooklibrarybackend.entity.Book;
 import com.horizon.ebooklibrary.ebooklibrarybackend.entity.Role;
 import com.horizon.ebooklibrary.ebooklibrarybackend.entity.User;
+import com.horizon.ebooklibrary.ebooklibrarybackend.entity.UserBook;
+import com.horizon.ebooklibrary.ebooklibrarybackend.repository.BookRepository;
+import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserBookRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserRepository;
 import com.horizon.ebooklibrary.ebooklibrarybackend.security.JwtUtils;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
 /**
- * Service class that handles user authentication and registration
+ * Service class that handles user authentication and registration.
+ * Initializes new users with all existing books marked as unread.
  */
 @SuppressWarnings("unused")
 @Service
@@ -21,11 +28,14 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BookRepository bookRepository;
+    private final UserBookRepository userBookRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
     /**
      * Registers a new user with an encoded password.
+     * By default assigns to the user the 'USER' role and all books as unread.
      * @param user The user to be registered.
      */
     public void registerUser(User user) {
@@ -34,8 +44,25 @@ public class UserService {
             user.setRole(Role.USER);
         }
         // Encrypts the password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt password
-        userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Save user to database
+        User savedUser = userRepository.save(user);
+
+        // Fetch all existing books
+        List<Book> allBooks = bookRepository.findAll();
+
+        // Create UserBook entries for all books as unread
+        List<UserBook> userBooks = allBooks.stream()
+                .map(book -> UserBook.builder()
+                        .user(savedUser)
+                        .book(book)
+                        .read(false)
+                        .build())
+                .collect(Collectors.toList());
+
+        // Save all UserBook entries in bulk
+        userBookRepository.saveAll(userBooks);
     }
 
     /**
