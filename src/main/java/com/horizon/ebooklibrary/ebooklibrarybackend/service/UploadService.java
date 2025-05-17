@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 
 /**
@@ -95,14 +97,20 @@ public class UploadService {
      * @throws IOException if deletion fails
      */
     public void deleteFile(String fileUrl) throws IOException {
-        // Extract just the file name safely
-        String filename = Paths.get(new URL(fileUrl).getPath()).getFileName().toString();
 
-        //Build the full absolute path
-        Path filePath = getUploadPath().resolve(filename).normalize();
+        try {
+            // Parse the file URL to extract the filename
+            URI uri = new URI(fileUrl);
+            String filename = Paths.get(uri.getPath()).getFileName().toString();
 
-        // Delete the file if it exists
-        Files.deleteIfExists(filePath);
+            // Resolve the full path to get the file
+            Path filePath = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(filename).normalize();
+
+            // Delete the file if it exists
+            Files.deleteIfExists(filePath);
+        } catch(URISyntaxException e) {
+            throw new IOException("Invalid file URL: " + fileUrl, e);
+        }
     }
 
     /**
