@@ -15,7 +15,9 @@ import java.nio.file.Paths;
 
 
 /**
- * Controller class to serve uploaded PDF files from the local filesystem
+ * Controller class to serve uploaded PDF files from the filesystem
+ * Allows the android app to load images and pdfs from URLs
+ * This controller is what allows those URLs to work by mapping: GET /files/{filename}
  */
 @SuppressWarnings("unused")
 @RestController
