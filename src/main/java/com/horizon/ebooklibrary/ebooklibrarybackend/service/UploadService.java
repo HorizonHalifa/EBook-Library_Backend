@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.net.URL;
+import java.time.Instant;
 
 /**
  * Service responsible for handling file uploads.
@@ -26,53 +27,66 @@ public class UploadService {
     @Value("${upload.url-prefix}")
     private String urlPrefix;
 
+
+    /*
+     * The following savePdf and saveImage methods, generate a unique name for uploaded files with timestamps.
+     * The reason this is necessary is that saving into the system different files with the same name might result in overrides.
+     * Therefore, a unique naming convention is necessary and saving according to timestamp is one possible way to integrate this that seemed most reasonable at the time.
+     */
+
     /**
-     * Saves a PDF file to the upload directory.
-     * @param file The uploaded MultipartFile
-     * @return the publicly accessible URL to the upload file
+     * Saves a PDF file to the upload directory with a unique timestamped filename.
+     * @param file The uploaded PDF file
+     * @return public URL to the stored file
      * @throws IOException if saving fails
      */
     public String savePdf(MultipartFile file) throws IOException {
-        // Ensure uploads folder exists
-        Path uploadPath = Paths.get("").toAbsolutePath().resolve(uploadDir);
-        if(!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
+        ensureUploadDirExists();
 
-        // Use the original file name
-        String filename = file.getOriginalFilename();
-        if (filename == null || !filename.toLowerCase().endsWith(".pdf")) {
+        // Validate filename and extension
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".pdf")) {
             throw new IllegalArgumentException("Only PDF files are supported.");
         }
 
+        // Get a unique time stamp file name
+        String uniqueFilename = generateTimeStampedFilename(originalFilename);
+
         // Save the file to disk
-        Path filePath = uploadPath.resolve(filename);
+        Path filePath = getUploadPath().resolve(uniqueFilename);
         file.transferTo(filePath.toFile());
 
         // Return public URL to access the file
-        return urlPrefix + filename;
+        return urlPrefix + uniqueFilename;
     }
 
+    /**
+     * Saves an image file (JPG, PNG) with a unique timestamped filename.
+     * @param file The uploaded image file
+     * @return public URL to the stored file
+     * @throws IOException if saving fails
+     */
     public String saveImage(MultipartFile file) throws IOException {
-        // Ensure uploads folder exists
-        Path uploadPath = Paths.get("").toAbsolutePath().resolve(uploadDir);
-        if(!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
+        ensureUploadDirExists();
 
         // Validate filename and extension
-        String filename = file.getOriginalFilename();
-        if (filename == null ||
-                !(filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg") || filename.toLowerCase().endsWith(".png"))) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null ||
+                !(originalFilename.toLowerCase().endsWith(".jpg")
+                        || originalFilename.toLowerCase().endsWith(".jpeg")
+                        || originalFilename.toLowerCase().endsWith(".png"))) {
             throw new IllegalArgumentException("Only JPG and PNG images are supported.");
         }
 
+        // Get a unique time stamp file name
+        String uniqueFilename = generateTimeStampedFilename(originalFilename);
+
         // Save the file
-        Path filePath = uploadPath.resolve(filename);
+        Path filePath = getUploadPath().resolve(uniqueFilename);
         file.transferTo(filePath.toFile());
 
         // Return public URL
-        return urlPrefix + filename;
+        return urlPrefix + uniqueFilename;
     }
 
     /**
@@ -85,10 +99,40 @@ public class UploadService {
         String filename = Paths.get(new URL(fileUrl).getPath()).getFileName().toString();
 
         //Build the full absolute path
-        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Path filePath = uploadPath.resolve(filename).normalize();
+        Path filePath = getUploadPath().resolve(filename).normalize();
 
         // Delete the file if it exists
         Files.deleteIfExists(filePath);
+    }
+
+    /**
+     * Ensures that the upload directory exists.
+     * Creates it if necessary
+     */
+    private void ensureUploadDirExists() throws IOException {
+        Path uploadPath = getUploadPath();
+        if(!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+    }
+
+    /**
+     * @return the full upload path
+     */
+    private Path getUploadPath() {
+        return Paths.get(uploadDir).toAbsolutePath().normalize();
+    }
+
+    /**
+     * Appends a timestamp to the filename to ensure uniqueness.
+     * @param originalFilename original file name from client
+     * @return modified filename with timestamp
+     */
+    private String generateTimeStampedFilename(String originalFilename) {
+        String baseName = originalFilename.substring(0, originalFilename.lastIndexOf(".")); // Saves the name of the file without the type after the '.' .
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // Saves the type of the file that is after the '.' .
+        long timeStamp = Instant.now().toEpochMilli(); // Get some time reference long number for the java time framework
+
+        return baseName + "_" + timeStamp + extension; // Builds the file so it returns "originalFileName_generatedTimeStamp.fileType"
     }
 }
