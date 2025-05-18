@@ -6,6 +6,7 @@ import lombok.Data;
 /**
  * DTO returned to the frontend after successful login, containing JWT tokens and the user's role
  */
+@SuppressWarnings("unused")
 @Data
 @AllArgsConstructor
 public class LoginResponse {
