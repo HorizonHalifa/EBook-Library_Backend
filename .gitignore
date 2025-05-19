@@ -41,3 +41,5 @@ out/
 secrets/
 *.json
 *.key
+.env
+*.env
