@@ -108,19 +108,19 @@ This account is required for uploading or deleting books.
 
 ## API Summary
 
-| Method | Endpoint                     | Access         | Description                              |
-|--------|------------------------------|----------------|------------------------------------------|
-| POST   | `/auth/signup`               | Public         | Register a new user                      |
-| POST   | `/auth/login`                | Public         | Authenticate and receive JWT tokens      |
-| POST   | `/auth/refresh`              | Public         | Refresh an access token                  |
-| GET    | `/books`                     | Public/User    | Get all available books                  |
-| GET    | `/books/read`                | Authenticated  | Get books the user has marked as read    |
-| GET    | `/books/unread`              | Authenticated  | Get books the user has not read          |
-| POST   | `/books/{id}/read`           | Authenticated  | Mark a book as read                      |
-| POST   | `/books/{id}/unread`         | Authenticated  | Mark a book as unread                    |
-| POST   | `/books`                     | Admin Only     | Upload a new book (PDF + image)          |
-| DELETE | `/books/{id}`                | Admin Only     | Delete a book                            |
-| GET    | `/files/{filename}`          | Public         | Serve a PDF or image file                |
+| Method | Endpoint             | Access         | Description                              |
+|--------|----------------------|----------------|------------------------------------------|
+| POST   | `/auth/signup`       | Public         | Register a new user                      |
+| POST   | `/auth/login`        | Public         | Authenticate and receive JWT tokens      |
+| POST   | `/auth/refresh`      | Public         | Refresh an access token                  |
+| GET    | `/books`             | Public/User    | Get all available books                  |
+| GET    | `/books/read`        | Authenticated  | Get books the user has marked as read    |
+| GET    | `/books/unread`      | Authenticated  | Get books the user has not read          |
+| POST   | `/books/{id}/read`   | Authenticated  | Mark a book as read                      |
+| POST   | `/books/{id}/unread` | Authenticated  | Mark a book as unread                    |
+| POST   | `/books/upload`      | Admin Only     | Upload a new book (PDF + image)          |
+| DELETE | `/books/{id}`        | Admin Only     | Delete a book                            |
+| GET    | `/files/{filename}`  | Public         | Serve a PDF or image file                |
 
 ---
 
