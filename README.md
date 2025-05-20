@@ -6,6 +6,22 @@ It is implemented in Java using Spring Boot and designed to run with Docker and 
 
 ---
 
+## Project Purpose
+The EBook Library project is a full-stack system built as a final student project to demonstrate advanced Java programming skills, Android development, and backend design using Spring Boot.
+
+It enables users to browse, read, and manage PDF books, while admins can upload and delete books.
+Authentication is handled via JWT tokens, and user-specific reading status is tracked. The system also uses internal JMS-based event handling.
+
+This project showcases real-world implementation of:
+
+- Android development
+- JPA (Java Persistence API)
+- Spring Boot and Spring Security
+- JWT authentication
+- JMS internal messaging with publish-subscribe logic
+
+---
+
 ## Features
 
 - **Book Management**
