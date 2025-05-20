@@ -44,3 +44,4 @@ secrets/
 .env
 *.env
 /db/init.sql
+/wait-for-db.sh

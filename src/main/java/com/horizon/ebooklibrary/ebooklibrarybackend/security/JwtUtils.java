@@ -20,7 +20,7 @@ public class JwtUtils {
     private static final long EXPIRATION_TIME_2HR = 7200000; // 2 hours expiry in ms value
 
     // Secret ket used to sign tokens
-    private static final String SECRET = JwtSecretLoader.loadJwtSecret();
+    private final String SECRET = JwtSecretLoader.loadJwtSecret();
     // Convert Base64-encoded secret to HMAC SHA key
     private final Key secretKey = Keys.hmacShaKeyFor(SECRET.getBytes());
 

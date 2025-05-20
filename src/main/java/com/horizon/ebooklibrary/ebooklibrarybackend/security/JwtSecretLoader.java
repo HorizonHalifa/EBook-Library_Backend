@@ -14,6 +14,7 @@ public class JwtSecretLoader {
     public static String loadJwtSecret() {
         try {
             String keyPath = System.getenv("JWT_SECRET_PATH");
+            System.out.println("JWT_SECRET_PATH = " + keyPath); // ththtehteth
             if(keyPath == null || keyPath.isEmpty()) {
                 throw new IllegalStateException("JWT_SECRET_PATH environment variable not set.");
             }
