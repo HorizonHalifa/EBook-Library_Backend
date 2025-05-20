@@ -11,9 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * AdminUserInitializer ensures a default admin user is created on first run
- * if one doesn't already exist in the database. This replaces the need
- * for init.sql schema bootstrapping.
+ * AdminUserInitializer ensures a default admin user is created on first run if one doesn't already exist in the database.
  */
 @Component
 @RequiredArgsConstructor
