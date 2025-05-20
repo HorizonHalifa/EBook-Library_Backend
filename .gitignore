@@ -43,5 +43,3 @@ secrets/
 *.key
 .env
 *.env
-/db/init.sql
-/wait-for-db.sh

@@ -10,7 +10,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
       - "5432:5432"
 
@@ -31,6 +30,8 @@ services:
       UPLOAD_URL_PREFIX: ${UPLOAD_URL_PREFIX}
       JWT_SECRET_PATH: ${JWT_SECRET_PATH}
       FIREBASE_CREDENTIALS_PATH: ${FIREBASE_CREDENTIALS_PATH}
+      DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD}
     volumes:
       - ./uploads:/app/uploads:rw
       - ./secrets:/run/secrets:ro
