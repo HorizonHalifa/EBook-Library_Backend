@@ -43,13 +43,14 @@ It is implemented in Java using Spring Boot and designed to run with Docker and 
 
 ## Technologies Used
 
-- **Java 23**, **Spring Boot 3.4**
+- Java 23 & Spring Boot 3.4
 - Spring Security, Spring Web, Spring Data JPA
-- PostgreSQL for data storage
-- Hibernate (ORM)
-- Firebase Admin SDK
-- JWT for stateless authentication
-- Docker + Docker Compose
+- Hibernate
+- PostgreSQL (database)
+- Firebase Admin SDK (notifications)
+- JWT (stateless authentication)
+- JMS with Spring’s `@EventListener`
+- Docker & Docker Compose
 
 ---
 
@@ -67,7 +68,7 @@ It is implemented in Java using Spring Boot and designed to run with Docker and 
       DB_PASSWORD=your_db_password
  
       UPLOAD_DIR=/app/uploads
-      UPLOAD_URL_PREFIX=http://localhost:8080/files
+      UPLOAD_URL_PREFIX=http://10.0.2.2:8080/files/
  
       JWT_SECRET_PATH=/run/secrets/jwt-secret.key
       FIREBASE_CREDENTIALS_PATH=/run/secrets/firebase-adminsdk.json
@@ -77,7 +78,7 @@ It is implemented in Java using Spring Boot and designed to run with Docker and 
       ```
 
 3. **Secrets**
-    - Create a `secrets/` folder (not included in version control).
+    - Create a `secrets/` folder (not included in version control) from the root directory of ebooklibrarybackend.
         - Place your JWT secret key inside: `secrets/jwt-secret.key`
         - Place your Firebase Admin SDK JSON inside: `secrets/firebase-adminsdk.json`
 
@@ -105,38 +106,40 @@ This account is required for uploading or deleting books.
 
 ---
 
-## 🔗 API Summary
+## API Summary
 
-| Endpoint                    | Access        | Description                        |
-|----------------------------|---------------|------------------------------------|
-| `/auth/signup`             | Public        | Register a new user                |
-| `/auth/login`              | Public        | Authenticate user, return tokens   |
-| `/auth/refresh`            | Public        | Refresh access token               |
-| `/books`                   | Public        | Get all books                      |
-| `/books/read`              | Authenticated | User’s read books                  |
-| `/books/unread`            | Authenticated | User’s unread books                |
-| `/books/{id}/read`         | Authenticated | Mark book as read                  |
-| `/books/{id}/unread`       | Authenticated | Mark book as unread                |
-| `/books` (POST)            | Admin only    | Upload book (multipart/form-data)  |
-| `/books/{id}` (DELETE)     | Admin only    | Delete a book                      |
-| `/files/{filename}`        | Public        | Serve book PDF or cover image      |
+| Method | Endpoint                     | Access         | Description                              |
+|--------|------------------------------|----------------|------------------------------------------|
+| POST   | `/auth/signup`               | Public         | Register a new user                      |
+| POST   | `/auth/login`                | Public         | Authenticate and receive JWT tokens      |
+| POST   | `/auth/refresh`              | Public         | Refresh an access token                  |
+| GET    | `/books`                     | Public/User    | Get all available books                  |
+| GET    | `/books/read`                | Authenticated  | Get books the user has marked as read    |
+| GET    | `/books/unread`              | Authenticated  | Get books the user has not read          |
+| POST   | `/books/{id}/read`           | Authenticated  | Mark a book as read                      |
+| POST   | `/books/{id}/unread`         | Authenticated  | Mark a book as unread                    |
+| POST   | `/books`                     | Admin Only     | Upload a new book (PDF + image)          |
+| DELETE | `/books/{id}`                | Admin Only     | Delete a book                            |
+| GET    | `/files/{filename}`          | Public         | Serve a PDF or image file                |
 
 ---
 
 ## Firebase Setup (For Push Notifications)
 
-- Create a Firebase project at: [console.firebase.google.com](https://console.firebase.google.com/)
-- Go to “Service Accounts” → “Generate New Private Key”
-- Save the JSON to `secrets/firebase-adminsdk.json`
-- Reference it in `.env` as:  
-  `FIREBASE_CREDENTIALS_PATH=/run/secrets/firebase-adminsdk.json`
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project with corresponding credentials and enable FCM
+3. Generate a private key from “Service accounts”
+4. Save your `your_generated_file.json` in the `secrets/` folder
+5. Make sure `.env` contains:
+  `FIREBASE_CREDENTIALS_PATH=/run/secrets/your_generated_file.json`
 
 ---
 
 ## File Handling
 
-- Uploaded files (PDFs and cover images) are stored in `./uploads` on the host.
-- The backend serves files via `/files/{filename}` endpoint.
+- Uploaded files (PDFs and cover images) are stored in `./uploads` on the host system.
+- The backend serves files via `/files/{filename}` endpoint, so that they are accessed via:
+  `http://10.0.2.2:8080/files/{filename}`
 
 ---
 
