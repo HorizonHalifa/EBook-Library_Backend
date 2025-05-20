@@ -43,3 +43,4 @@ secrets/
 *.key
 .env
 *.env
+/db/init.sql

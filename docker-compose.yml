@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: ebook_postgres
+    environment:
+      POSTGRES_DB: ebook_library
+      POSTGRES_USER: ebook_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ebook_backend
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      UPLOAD_DIR: ${UPLOAD_DIR}
+      UPLOAD_URL_PREFIX: ${UPLOAD_URL_PREFIX}
+      JWT_SECRET_PATH: ${JWT_SECRET_PATH}
+      FIREBASE_CREDENTIALS_PATH: ${FIREBASE_CREDENTIALS_PATH}
+    volumes:
+      - ./uploads:/app/uploads:rw
+      - ./secrets:/run/secrets:ro
+
+volumes:
+  db-data:
