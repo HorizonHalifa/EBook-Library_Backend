@@ -1,6 +1,7 @@
 # EBook Library Backend
 
-This repository contains the backend server for the EBook Library platform,. The backend provides REST APIs for managing users, books, file uploads, read status tracking, and sending push notifications.
+This repository contains the backend server for the EBook Library platform. 
+The backend provides REST APIs for managing users, books, file uploads, read status tracking, and sending push notifications.
 It is implemented in Java using Spring Boot and designed to run with Docker and PostgreSQL.
 
 ---
