@@ -3,9 +3,9 @@ package com.horizon.ebooklibrary.ebooklibrarybackend.init;
 import com.horizon.ebooklibrary.ebooklibrarybackend.entity.Role;
 import com.horizon.ebooklibrary.ebooklibrarybackend.entity.User;
 import com.horizon.ebooklibrary.ebooklibrarybackend.repository.UserRepository;
+import com.horizon.ebooklibrary.ebooklibrarybackend.service.UserService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -18,7 +18,7 @@ import java.util.Optional;
 public class AdminUserInitializer {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     private static final String DEFAULT_ADMIN_EMAIL = System.getenv().get("DEFAULT_ADMIN_EMAIL");
 
@@ -26,18 +26,22 @@ public class AdminUserInitializer {
 
     @PostConstruct
     public void initAdminUser() {
-        Optional<User> admin = userRepository.findByEmail(DEFAULT_ADMIN_EMAIL);
-        if (admin.isEmpty()) {
+        if(DEFAULT_ADMIN_EMAIL == null || DEFAULT_ADMIN_PASSWORD == null) {
+            System.err.println("Admin credentials not set in environment. Skipping admin user initialization.");
+        }
+
+        Optional<User> existingAdmin = userRepository.findByEmail(DEFAULT_ADMIN_EMAIL);
+        if (existingAdmin.isEmpty()) {
             User newAdmin = User.builder()
                     .email(DEFAULT_ADMIN_EMAIL)
-                    .password(passwordEncoder.encode(DEFAULT_ADMIN_PASSWORD))
-                    .role(Role.ADMIN)
+                    .password(DEFAULT_ADMIN_PASSWORD)
+                    .role(Role.ADMIN) // Force ADMIN instead of default USER
                     .build();
 
-            userRepository.save(newAdmin);
+            userService.registerUser(newAdmin);
             System.out.println("Default admin user created: " + DEFAULT_ADMIN_EMAIL);
         } else {
-            System.out.println("ℹAdmin user already exists: " + DEFAULT_ADMIN_EMAIL);
+            System.out.println("Admin user already exists: " + DEFAULT_ADMIN_EMAIL);
         }
     }
 }

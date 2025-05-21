@@ -1,4 +1,5 @@
 #!/bin/sh
+echo "Starting wait-for-db.sh..."
 echo "Waiting for PostgreSQL..."
 until nc -z db 5432; do
   sleep 1
